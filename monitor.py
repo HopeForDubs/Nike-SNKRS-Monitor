@@ -98,9 +98,11 @@ class NikeSNKRSMonitor(object):
             slug, title, imgURL = self._parseProperties(obj)
             self._productsSeen.append(title)
         while(True):
-            logging.info('Looking for products')
+            print('Looking for products')
+            sys.stdout.flush()
             proxy = proxyManager.random_proxy()
-            logging.info('Using proxies %s' % proxy.get_dict())
+            print('Using proxies %s' % proxy.get_dict())
+            sys.stdout.flush()
             r = requests.get(self.apiLink, proxies=proxy.get_dict())
             jsonObj = r.json()
             objects = jsonObj['objects']
@@ -113,16 +115,20 @@ class NikeSNKRSMonitor(object):
                 price, currency, sizes, method, releaseDate = self._getProductInfo(product)
                 self.webhook.send(
                     embed=self._createEmbed(slug, title, imgURL, price, currency, sizes, method, releaseDate))
-                logging.info('Found new product!')
-            logging.info('Sleeping for %ss, will query for products once done' % sleepTime)
+                print('Found new product!')
+                sys.stdout.flush()
+            print('Sleeping for %ss, will query for products once done' % sleepTime)
+            sys.stdout.flush()
             time.sleep(sleepTime)
 
 if __name__ == '__main__':
     m = NikeSNKRSMonitor()
     if len(sys.argv) == 1:
-        logging.info('No interval given, using default interval of 30 seconds')
+        print('No interval given, using default interval of 30 seconds')
+        sys.stdout.flush()
         m.monitor()
     else:
         sleepTime = sys.argv[1]
-        logging.info('Will query in intervals of %s seconds'%sleepTime)
+        print('Will query in intervals of %s seconds'%sleepTime)
+        sys.stdout.flush()
         m.monitor(int(sleepTime))
