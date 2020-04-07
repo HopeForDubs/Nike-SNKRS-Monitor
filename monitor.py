@@ -129,11 +129,15 @@ class NikeSNKRSMonitor(object):
 
 
 if __name__ == '__main__':
-    m = NikeSNKRSMonitor()
-    if len(sys.argv) == 1:
-        _flush('No interval given, using default interval of 30 seconds')
-        m.monitor()
-    else:
-        sleepTime = sys.argv[1]
-        _flush('Will query in intervals of %s seconds'%sleepTime)
-        m.monitor(int(sleepTime))
+    try:
+        m = NikeSNKRSMonitor()
+        if len(sys.argv) == 1:
+            _flush('No interval given, using default interval of 30 seconds')
+            m.monitor()
+        else:
+            sleepTime = sys.argv[1]
+            _flush('Will query in intervals of %s seconds'%sleepTime)
+            m.monitor(int(sleepTime))
+    except Exception as err:
+        _flush(repr(err))
+        raise
