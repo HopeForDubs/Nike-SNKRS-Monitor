@@ -120,7 +120,9 @@ class NikeSNKRSMonitor(object):
 if __name__ == '__main__':
     m = NikeSNKRSMonitor()
     if len(sys.argv) == 1:
+        logging.info('No interval given, using default interval of 30 seconds')
         m.monitor()
     else:
         sleepTime = sys.argv[1]
+        logging.info('Will query in intervals of %s seconds'%sleepTime)
         m.monitor(int(sleepTime))
