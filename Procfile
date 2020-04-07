@@ -1,1 +1,1 @@
-web: python monitor.py 15
+worker: python monitor.py 15
