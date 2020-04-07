@@ -1,6 +1,6 @@
 from discord import Webhook, RequestsWebhookAdapter, Embed
+import logging
 from proxymanager import ProxyManager
-import pprint
 import requests
 import sys
 import time
@@ -98,8 +98,9 @@ class NikeSNKRSMonitor(object):
             slug, title, imgURL = self._parseProperties(obj)
             self._productsSeen.append(title)
         while(True):
-            print('Looking for products')
+            logging.info('Looking for products')
             proxy = proxyManager.random_proxy()
+            logging.info('Using proxies %s' % proxy.get_dict())
             r = requests.get(self.apiLink, proxies=proxy.get_dict())
             jsonObj = r.json()
             objects = jsonObj['objects']
@@ -112,8 +113,8 @@ class NikeSNKRSMonitor(object):
                 price, currency, sizes, method, releaseDate = self._getProductInfo(product)
                 self.webhook.send(
                     embed=self._createEmbed(slug, title, imgURL, price, currency, sizes, method, releaseDate))
-                print('Found new product!')
-            print('Sleeping for %ss, will query for products once done'%sleepTime)
+                logging.info('Found new product!')
+            logging.info('Sleeping for %ss, will query for products once done' % sleepTime)
             time.sleep(sleepTime)
 
 if __name__ == '__main__':
