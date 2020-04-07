@@ -1,4 +1,5 @@
 discord
 proxy-manager
 pprint
+requests
 ujson
