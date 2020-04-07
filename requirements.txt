@@ -1,4 +1,4 @@
 discord
-proxymanager
+proxy-manager
 pprint
 ujson
