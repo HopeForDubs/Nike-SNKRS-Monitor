@@ -1,1 +1,1 @@
-web: python monitor.py
+web: python monitor.py 15

@@ -2,6 +2,7 @@ from discord import Webhook, RequestsWebhookAdapter, Embed
 from proxymanager import ProxyManager
 import pprint
 import requests
+import sys
 import time
 import ujson
 
@@ -86,7 +87,7 @@ class NikeSNKRSMonitor(object):
             if count >= n:
                 break
 
-    def monitor(self):
+    def monitor(self, sleepTime=30):
         proxyManager = ProxyManager('proxies.txt')
         self._productsSeen = []
         self.getTopNProducts(1) # publish the latest product seen at the start of the monitoring
@@ -112,10 +113,13 @@ class NikeSNKRSMonitor(object):
                 self.webhook.send(
                     embed=self._createEmbed(slug, title, imgURL, price, currency, sizes, method, releaseDate))
                 print('Found new product!')
-            print('Sleeping for 30s, will query for products once done')
-            time.sleep(30)
+            print('Sleeping for %ss, will query for products once done'%sleepTime)
+            time.sleep(sleepTime)
 
 if __name__ == '__main__':
     m = NikeSNKRSMonitor()
-    # m.getTopNProducts(1)
-    m.monitor()
+    if len(sys.argv) == 1:
+        m.monitor()
+    else:
+        sleepTime = sys.argv[1]
+        m.monitor(sleepTime)
