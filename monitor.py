@@ -122,4 +122,4 @@ if __name__ == '__main__':
         m.monitor()
     else:
         sleepTime = sys.argv[1]
-        m.monitor(sleepTime)
+        m.monitor(int(sleepTime))
