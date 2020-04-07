@@ -112,7 +112,6 @@ class NikeSNKRSMonitor(object):
                 for obj in objects:
                     slug, title, imgURL = self._parseProperties(obj)
                     if title in self._productsSeen:
-                        _flush('No new product found :-(')
                         continue
                     print('New product found :-D')
                     self._productsSeen.append(title)
