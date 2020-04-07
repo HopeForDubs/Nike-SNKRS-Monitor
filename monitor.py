@@ -1,5 +1,4 @@
 from discord import Webhook, RequestsWebhookAdapter, Embed
-import logging
 from proxymanager import ProxyManager
 import requests
 import sys
@@ -8,6 +7,11 @@ import ujson
 
 
 requests.models.json = ujson
+
+
+def _flush(msg):
+    print(msg)
+    sys.stdout.flush()
 
 
 # noinspection PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming
@@ -98,37 +102,39 @@ class NikeSNKRSMonitor(object):
             slug, title, imgURL = self._parseProperties(obj)
             self._productsSeen.append(title)
         while(True):
-            print('Looking for products')
-            sys.stdout.flush()
-            proxy = proxyManager.random_proxy()
-            print('Using proxies %s' % proxy.get_dict())
-            sys.stdout.flush()
-            r = requests.get(self.apiLink, proxies=proxy.get_dict())
-            jsonObj = r.json()
-            objects = jsonObj['objects']
-            for obj in objects:
-                slug, title, imgURL = self._parseProperties(obj)
-                if title in self._productsSeen:
-                    continue
-                self._productsSeen.append(title)
-                product = self._getProduct(slug)
-                price, currency, sizes, method, releaseDate = self._getProductInfo(product)
-                self.webhook.send(
-                    embed=self._createEmbed(slug, title, imgURL, price, currency, sizes, method, releaseDate))
-                print('Found new product!')
-                sys.stdout.flush()
-            print('Sleeping for %ss, will query for products once done' % sleepTime)
-            sys.stdout.flush()
-            time.sleep(sleepTime)
+            try:
+                _flush('Looking for products')
+                proxy = proxyManager.random_proxy()
+                _flush('Using proxies %s' % proxy.get_dict())
+                r = requests.get(self.apiLink, proxies=proxy.get_dict())
+                jsonObj = r.json()
+                objects = jsonObj['objects']
+                for obj in objects:
+                    slug, title, imgURL = self._parseProperties(obj)
+                    if title in self._productsSeen:
+                        _flush('No new product found :-(')
+                        continue
+                    print('New product found :-D')
+                    self._productsSeen.append(title)
+                    product = self._getProduct(slug)
+                    price, currency, sizes, method, releaseDate = self._getProductInfo(product)
+                    self.webhook.send(
+                        embed=self._createEmbed(slug, title, imgURL, price, currency, sizes, method, releaseDate))
+                    _flush('Found new product!')
+            except Exception as err:
+                _flush('Encountered some exception')
+                _flush(repr(err))
+            finally:
+                _flush('Sleeping for %ss, will query for products once done' % sleepTime)
+                time.sleep(sleepTime)
+
 
 if __name__ == '__main__':
     m = NikeSNKRSMonitor()
     if len(sys.argv) == 1:
-        print('No interval given, using default interval of 30 seconds')
-        sys.stdout.flush()
+        _flush('No interval given, using default interval of 30 seconds')
         m.monitor()
     else:
         sleepTime = sys.argv[1]
-        print('Will query in intervals of %s seconds'%sleepTime)
-        sys.stdout.flush()
+        _flush('Will query in intervals of %s seconds'%sleepTime)
         m.monitor(int(sleepTime))
