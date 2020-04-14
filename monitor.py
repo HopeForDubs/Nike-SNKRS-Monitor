@@ -17,11 +17,11 @@ def _flush(msg):
 # noinspection PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming,PyPep8Naming
 class NikeSNKRSMonitor(object):
 
-    def __init__(self):
+    def __init__(self, webhookURL):
         self.apiLink = "https://api.nike.com/product_feed/threads/v2/?anchor=0&count=50&filter=marketplace%28US%29&filter=language%28en%29&filter=channelId%28010794e5-35fe-4e32-aaff-cd2c74f89d61%29&filter=exclusiveAccess%28false%29"
         self.productApiLink = f'https://api.nike.com/product_feed/threads/v2/?filter=marketplace%28US%29&filter=language%28en%29&filter=channelId%28010794e5-35fe-4e32-aaff-cd2c74f89d61%29&filter=seoSlugs%28'
         self.mostRecent = []
-        self.webhookURL = 'https://discordapp.com/api/webhooks/695493120028311552/ToN3xya822ZAnZdn2dmi7eozPUkCCj8wz1aPxKocvaSVcV6syv8T1qeLtRKI8xYtyKjf'
+        self.webhookURL = webhookURL
         self.webhook = Webhook.from_url(self.webhookURL, adapter=RequestsWebhookAdapter())
 
     def _skuToStockLevel(self, skuList):
